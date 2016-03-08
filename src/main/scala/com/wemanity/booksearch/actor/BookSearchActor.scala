@@ -12,6 +12,7 @@ object BookSearchActor {
   def props() = Props(new BookSearchActor())
 
   case class SearchByName(name: String)
+  case class SearchByISBN(isbn: Integer)
 
   case class BookInfo(name: String, price: Double)
 

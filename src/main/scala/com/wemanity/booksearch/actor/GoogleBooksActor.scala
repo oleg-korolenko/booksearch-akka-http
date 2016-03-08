@@ -2,7 +2,7 @@ package com.wemanity.booksearch.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
-import com.wemanity.booksearch.actor.BookSearchActor.SearchByName
+import com.wemanity.booksearch.actor.BookSearchActor.{SearchByISBN, SearchByName}
 import com.wemanity.booksearch.actor.UrlCallerActor.Get
 
 /**
@@ -23,6 +23,11 @@ class GoogleBooksActor() extends Actor with ActorLogging {
   override def receive: Receive = {
     case SearchByName(name) => {
       val url = s"https://www.googleapis.com/books/v1/volumes?q={$name}"
+      val urlCaller = context.actorOf(UrlCallerActor.props())
+      urlCaller ! Get(url)
+    }
+    case SearchByISBN(isbn) => {
+      val url  = s"https://www.googleapis.com/books/v1/volumes?q=isbn:{$isbn}"
       val urlCaller = context.actorOf(UrlCallerActor.props())
       urlCaller ! Get(url)
     }
