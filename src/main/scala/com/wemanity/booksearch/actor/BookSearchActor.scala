@@ -1,42 +1,46 @@
 package com.wemanity.booksearch.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
-import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
-import com.wemanity.booksearch.actor.BookSearchActor.{BookInfo, SearchByName}
-;
+import akka.actor.{PoisonPill, Actor, ActorLogging, Props}
+import akka.util.Timeout
+import com.typesafe.config.Config
+import com.wemanity.booksearch._
+import com.wemanity.booksearch.actor.BookSearchActor.{SearchByISBN}
+import akka.pattern.ask
+import scala.concurrent.Future
+import scala.concurrent.duration._
+import akka.pattern._
 
 /**
   * Created by oleg on 06/12/15.
   */
 object BookSearchActor {
-  def props() = Props(new BookSearchActor())
+  def props(config:Config) = Props(new BookSearchActor(config))
 
   case class SearchByName(name: String)
-  case class SearchByISBN(isbn: Integer)
-
-  case class BookInfo(name: String, price: Double)
-
+  case class SearchByISBN(isbn: Long)
 }
 
-class BookSearchActor() extends Actor with ActorLogging {
+class BookSearchActor(config:Config) extends Actor with ActorLogging {
 
   implicit def executionContext = context.dispatcher
+  implicit val requestTimeout = Timeout(5 seconds)
+
+  lazy val googleBooksActor = context.actorOf(GoogleBooksActor.props())
+  lazy val goodReadsActor = context.actorOf(GoodReadsActor.props(config.getString("api.goodreads.key")))
 
   override def receive: Receive = {
 
-    case SearchByName(name) => {
-      // Arriving here through "ask"
-      //TODO call different search actors
-      sender ! Some(BookInfo(name, 10.00))
-      /*
-      val urlCaller = context.actorOf(UrlCallerActor.props())
-      // all children actors will be stopped
-      self ! PoisonPill*/
-    }
-    //case Response(response)=>log.info(s"Received :$response")
-    case HttpResponse(StatusCodes.OK, headers, entity, _) => {
-      println("Got it ")
+    case SearchByISBN(isbn) => {
+      val gBookFuture=googleBooksActor.ask(SearchByISBN(isbn)).mapTo[Option[GoogleBooks]]
+      val bookReviewsFuture=goodReadsActor.ask(SearchByISBN(isbn)).mapTo[Option[GoodReadsBookReviews]]
+
+       val fullBookInfos =
+         for(
+           (gBook, bookReviews) <- gBookFuture.zip(bookReviewsFuture)
+          ) yield Some( BookInfos(gBook, bookReviews))
+
+      // pipe feature back to sender
+      fullBookInfos.to(sender)
     }
   }
-
 }

@@ -20,7 +20,7 @@ object BookService extends App with Service with RestRoutes {
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
 
-  override def createBookSearchActor(): ActorRef = system.actorOf(BookSearchActor.props())
+  override val bookSearchActor: ActorRef = system.actorOf(BookSearchActor.props(config))
 
   val host = config.getString("http.ip")
   val port = config.getInt("http.port")

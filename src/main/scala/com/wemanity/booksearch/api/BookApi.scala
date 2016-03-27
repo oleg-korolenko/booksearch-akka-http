@@ -1,14 +1,14 @@
 package com.wemanity.booksearch.api
 
 
-
-import akka.actor.ActorRef
+import akka.actor.{ActorRef, PoisonPill}
 import akka.pattern.ask
 import akka.util.Timeout
-import scala.concurrent.ExecutionContext
-import scala.concurrent.duration._
+import com.wemanity.booksearch.{BookInfos, BookInfo}
+import com.wemanity.booksearch.actor.BookSearchActor.{SearchByISBN, SearchByName}
 
-import com.wemanity.booksearch.actor.BookSearchActor.{BookInfo, SearchByName}
+import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Contains book api methods
@@ -19,14 +19,13 @@ import com.wemanity.booksearch.actor.BookSearchActor.{BookInfo, SearchByName}
 trait BookApi {
 
   implicit def executor: ExecutionContext
-  implicit val requestTimeout= Timeout(5 seconds)
 
-  def createBookSearchActor(): ActorRef
+  implicit val requestTimeout = Timeout(5 seconds)
 
-  def search(bookName: String) = {
-    val bookSearcher = createBookSearchActor()
+  val bookSearchActor: ActorRef
+
+  def searchByISBN(isbn: Long): Future[Option[BookInfos]] = {
     // mapping to specific type as message is not typed
-    bookSearcher.ask(SearchByName(bookName)).mapTo[Option[BookInfo]]
-
+    bookSearchActor.ask(SearchByISBN(isbn)).mapTo[Option[BookInfos]]
   }
 }

@@ -2,7 +2,7 @@ name := "book-search"
 organization := "com.wemanity"
 version := "SNAPSHOT-1.0"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 scalacOptions ++= Seq(
   "-target:jvm-1.8",
