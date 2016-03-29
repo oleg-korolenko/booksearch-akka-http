@@ -10,6 +10,7 @@ scalacOptions ++= Seq(
   "-unchecked",
   "-feature",
   "-language:_"
+//  , "-Ylog-classpath"
 )
 
 libraryDependencies ++= {

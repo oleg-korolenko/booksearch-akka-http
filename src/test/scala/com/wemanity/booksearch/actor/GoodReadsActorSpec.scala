@@ -5,13 +5,12 @@ import akka.testkit.{TestActorRef, TestKit, ImplicitSender}
 import com.typesafe.config.ConfigFactory
 import com.wemanity.booksearch.{GoodReadsBookReviews, StopSystemAfterAll}
 import com.wemanity.booksearch.actor.BookSearchActor.SearchByISBN
-import org.scalatest.{Ignore, MustMatchers, WordSpecLike}
+import org.scalatest.{MustMatchers, WordSpecLike}
 
 
 /**
   * Created by oleg on 26/03/16.
   */
-@Ignore
 class GoodReadsActorSpec extends TestKit(ActorSystem("test"))
   with WordSpecLike
   with MustMatchers

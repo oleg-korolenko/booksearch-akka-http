@@ -1,9 +1,10 @@
 package com.wemanity.booksearch.actor
 
-import akka.actor.ActorSystem
+import akka.actor.{Actor, ActorSystem}
+import akka.http.scaladsl.model.{HttpProtocol, StatusCodes, HttpResponse}
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit}
+import com.wemanity.booksearch.{TestHttpClientReturningBadRequest, GoogleBooks, GoogleBook, StopSystemAfterAll}
 import com.wemanity.booksearch.actor.BookSearchActor.SearchByISBN
-import com.wemanity.booksearch.{GoogleBooks, StopSystemAfterAll, TestHttpClientReturningBadRequest}
 import org.scalatest.{MustMatchers, WordSpecLike}
 
 
