@@ -1,5 +1,7 @@
 name := "book-search"
-organization := "com.wemanity"
+
+organization := "com.okorolenko"
+
 version := "SNAPSHOT-1.0"
 
 scalaVersion := "2.11.8"
