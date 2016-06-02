@@ -20,13 +20,13 @@ class GoogleBooksActorSpec extends TestKit(ActorSystem("test"))
   "A GoogleBooksActor" should {
     "should return book info searching by ISBN" in {
       val actorRef = TestActorRef(new GoogleBooksActor)
-      actorRef ! SearchByISBN(1935182757)
+      actorRef ! SearchByISBN(1617291013)
       val bookInfos = expectMsgClass(classOf[Some[GoogleBooks]])
       val bookSearchResult = bookInfos.get
       assertResult("books#volumes")(bookSearchResult.kind)
       assertResult(1)(bookSearchResult.totalItems)
       val title = bookSearchResult.items.get.head.volumeInfo.title
-      assertResult("Scala in Action")(title)
+      assertResult("Akka in Action")(title)
     }
 
     "should return book info without found items searching by non existing ISBN" in {

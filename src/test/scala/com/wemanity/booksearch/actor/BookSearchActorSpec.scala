@@ -22,7 +22,8 @@ class BookSearchActorSpec extends TestKit(ActorSystem("test"))
   with StopSystemAfterAll {
 
   val config = ConfigFactory.load()
-  val isbn = 1935182757
+  val isbn = 1617291013
+
   implicit val timeout = Timeout(5 seconds)
   implicit val executionContext = system.dispatcher
 
@@ -33,7 +34,7 @@ class BookSearchActorSpec extends TestKit(ActorSystem("test"))
       val future = actorRef.ask(SearchByISBN(isbn))
       Await.ready(future, timeout.duration)
     }
-    "should return return book informations receiving search by isbn" in {
+    "should return book infos receiving search by isbn" in {
       val actorRef = TestActorRef(new BookSearchActor(config))
       actorRef ! SearchByISBN(isbn)
       val bookInfos = expectMsgClass(classOf[Some[BookInfos]])
@@ -54,6 +55,6 @@ class BookSearchActorSpec extends TestKit(ActorSystem("test"))
     assertResult("books#volumes")(bookSearchResult.kind)
     assertResult(1)(bookSearchResult.totalItems)
     val title = bookSearchResult.items.get.head.volumeInfo.title
-    assertResult("Scala in Action")(title)
+    assertResult("Akka in Action")(title)
   }
 }

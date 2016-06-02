@@ -8,7 +8,13 @@ case class GoogleBooks(kind: String, totalItems: Int, items: Option[List[GoogleB
 
 case class GoogleBook(id: String,volumeInfo:GoogleBookInfo)
 
-case class GoogleBookInfo(title:String,authors:Array[String],publisher:String,description:String,averageRating:Double,ratingsCount:Int)
+case class GoogleBookInfo(title:String,
+                          authors:Array[String],
+                          publisher:String,
+                          description:String,
+                          averageRating:Option[Double],
+                          ratingsCount:Option[Int]
+                         )
 
 case class GoodReadsBookReviews(books: List[GoodReadsBookReview])
 
